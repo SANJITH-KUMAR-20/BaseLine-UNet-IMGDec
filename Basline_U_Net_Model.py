@@ -8,9 +8,10 @@ class UNet(nn.Module):
 
     def __init__(self, inp_channels, out_channels):
 
-        super(UNet).__init__()
+        super(UNet,self).__init__()
 
         self.in_channel = inp_channels
+        self.out_channels = out_channels
 
         self.initial = ConvBlock(inp_channels, 64)
         self.contract1 = EncodeDown(64, 128)

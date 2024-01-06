@@ -8,15 +8,15 @@ import torch.nn as nn
 
 class ConvBlock(nn.Module):
 
-    def __init__(self, in_channel,out_channel, mid_channel = None, isBias = True):
-        super(ConvBlock).__init__()
+    def __init__(self, in_channel,out_channel, mid_channel = None, isBias = False):
+        super(ConvBlock,self).__init__()
 
         if not mid_channel:
             mid_channel = out_channel
 
         self.dconv = nn.Sequential(
             nn.Conv2d(in_channels=in_channel, out_channels= mid_channel, kernel_size = 3, stride = 1, padding= 1, bias = isBias),
-            nn.BatchNorm2d(out_channel),
+            nn.BatchNorm2d(mid_channel),
             nn.ReLU(inplace=True),
             nn.Conv2d(in_channels=mid_channel, out_channels= out_channel, kernel_size = 3, stride = 1, padding= 1, bias = isBias),
             nn.BatchNorm2d(out_channel),
@@ -29,7 +29,7 @@ class ConvBlock(nn.Module):
 class EncodeDown(nn.Module):
 
     def __init__(self, in_channel, out_channel):
-        super(EncodeDown).__init__()
+        super(EncodeDown,self).__init__()
 
         self.down = nn.Sequential(
             nn.MaxPool2d(kernel_size= 2),
@@ -43,7 +43,7 @@ class EncodeDown(nn.Module):
 class DecodeUp(nn.Module):
 
     def __init__(self, in_channel, out_channel):
-
+        super(DecodeUp,self).__init__()
         self.up = nn.Upsample(scale_factor = 2, mode = 'bilinear', align_corners= True)
         self.dconv = ConvBlock(in_channel, out_channel, in_channel//2)
 
@@ -51,8 +51,8 @@ class DecodeUp(nn.Module):
         
         x = self.up(x)
 
-        HFactor = y.size()[1] - x.size()[1]
-        WFactor = y.size()[2] - x.size()[2]
+        HFactor = abs(y.size()[1] - x.size()[1])
+        WFactor = abs(y.size()[2] - x.size()[2])
 
         x = F.pad(x , [WFactor//2, WFactor - WFactor//2, HFactor//2, HFactor - HFactor//2])
 
@@ -63,7 +63,7 @@ class DecodeUp(nn.Module):
 class ResultConv(nn.Module):
 
     def __init__(self, in_channel, out_channel):
-        super(ResultConv).__init__()
+        super(ResultConv,self).__init__()
 
         self.conv = nn.Conv2d(in_channel, out_channel, kernel_size= 1)
 

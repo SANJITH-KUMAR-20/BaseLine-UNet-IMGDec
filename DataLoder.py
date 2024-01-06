@@ -13,13 +13,13 @@ class IMD2020Dataset(torch.utils.data.Dataset):
 
         self.transforms_fake = torchvision.transforms.Compose([
             torchvision.transforms.ToTensor(),
-            torchvision.transforms.Resize((224,224)),
+            torchvision.transforms.Resize((400,400)),
             torchvision.transforms.Normalize(mean= 0, std = 1, inplace= True)
         ])
 
         self.transforms_mask = torchvision.transforms.Compose([
             torchvision.transforms.ToTensor(),
-            torchvision.transforms.Resize((224,224))
+            torchvision.transforms.Resize((400,400))
         ])
     
     def __len__(self):
