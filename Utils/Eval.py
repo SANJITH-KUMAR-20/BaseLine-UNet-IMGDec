@@ -1,5 +1,5 @@
 import torch
-from Losses import dice_loss,Dice_Ceff
+from Utils.Losses import dice_loss,Dice_Ceff
 
 def evaluate(model , device , data_loader ,criterion ,dev_len: int):
   model.eval()

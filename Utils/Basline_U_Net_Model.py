@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from U_net_Modules import *
+from Utils.U_net_Modules import *
 
 
 class UNet(nn.Module):
