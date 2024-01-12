@@ -6,6 +6,17 @@ import torch.nn.functional as F
 import torch.nn as nn
 
 
+class ResNetBlock(nn.Module):
+
+    def __init__(self, Top_rem : int = -2):
+        super().__init__(self, ResNetBlock)
+        
+        self.ResBlock = torchvision.models.resnet152(pretrained = False)
+        self.applied = nn.Sequential(*list(self.ResBlock.children())[:Top_rem])
+
+    def forward(self, x):
+        return self.applied(x)
+
 class ConvBlock(nn.Module):
 
     def __init__(self, in_channel,out_channel, mid_channel = None, isBias = False):
@@ -69,3 +80,8 @@ class ResultConv(nn.Module):
 
     def forward(self, x):
         return self.conv(x)
+    
+
+# class SkipBlock(nn.Module):
+
+#     def __init__(self, in_channel, out_channel):
