@@ -81,12 +81,30 @@ class ResultConv(nn.Module):
     def forward(self, x):
         return self.conv(x)
     
-class BayarConv2d(nn.Module):
+class BayarConv(nn.Module):
 
-    def __init__(self, in_channel, out_channel, stride, padding):
+    def __init__(self, in_channel, out_channel, kernel_size = 5, stride = 1, padding = 0):
+        super(BayarConv, self).__init__()
 
         self.in_channel = in_channel
         self.out_channel = out_channel
+        self.kernel_size = kernel_size
+        self.stride = stride
+        self.padding = padding
+        self.mid_ele = torch.ones(self.in_channel, self.out_channel, 1) * -1.000
+
+        self.kernel = nn.Parameter(torch.randn((self.in_channel,self.out_channel,kernel_size**2-1)), requires_grad= True)
+
+
+    def constraint(self):
+        self.kernel.data = self.kernel.data.div(self.kernel.data.sum(dim = -1, keepdim=True))
+        center = self.kernel_size**2//2
+        real_kernel = torch.cat((self.kernel[:,:,:center], self.mid_ele, self.kernel[:,:,center:]),dim=2)
+        real_kernel = real_kernel.reshape((self.out_channel, self.in_channel, self.kernel_size, self.kernel_size))
+        return real_kernel
+    
+    def forward(self, x):
+        return F.conv2d(x, self.constraint(), stride = self.stride, padding=self.padding)
 
 # class SkipBlock(nn.Module):
 
