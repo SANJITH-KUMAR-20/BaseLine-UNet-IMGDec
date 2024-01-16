@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from Utils.U_net_Modules import *
+from Utils.ResUpMod import *
 
 
 class UNet(nn.Module):
@@ -12,6 +13,8 @@ class UNet(nn.Module):
 
         self.in_channel = inp_channels
         self.out_channels = out_channels
+        self.resnetresults = ResNetInterMediateResult()
+        self.ConCatUpsample = Upsample_and_concat(2048, inp_channels)
 
         self.initial = ConvBlock(inp_channels, 32)
         self.contract1 = EncodeDown(32, 64)
@@ -25,6 +28,9 @@ class UNet(nn.Module):
         self.resConv = ResultConv(32, out_channels)
 
     def forward(self, x):
+
+        res  = self.resnetresults(x)
+        x = self.ConCatUpsample(res)
 
         x1 = self.initial(x)
         x2 = self.contract1(x1)
