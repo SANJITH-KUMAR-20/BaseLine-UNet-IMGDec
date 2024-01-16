@@ -11,7 +11,7 @@ class ResNetBlock(nn.Module):
     def __init__(self, Top_rem : int = -2):
         super().__init__(self, ResNetBlock)
         
-        self.ResBlock = torchvision.models.resnet152(pretrained = False)
+        self.ResBlock = torchvision.models.resnet50(pretrained = True)
         self.applied = nn.Sequential(*list(self.ResBlock.children())[:Top_rem])
 
     def forward(self, x):
